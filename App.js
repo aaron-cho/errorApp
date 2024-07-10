@@ -1,23 +1,7 @@
-import { StyleSheet, Text, View, TouchableOpacity, Platform } from 'react-native';
-import React, { useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Platform, NativeModules } from 'react-native';
 import axios from 'axios';
 
-// const handleUncaughtException = (error) => {
-//   console.error('Uncaught exception:', error.message);
-//   if (error.stack) {
-//     console.error('Stack trace:', error.stack);
-//     // Insert log to error reporting service or analytics platform
-//   }
-//   Alert.alert('Error', 'An unexpected error occurred. Please try again later.');
-// };
-
-
-// // global error handler for uncaught exceptions
-// if (typeof global !== 'undefined') {
-//   global.onerror = (message, source, line, column, error) => {
-//     handleUncaughtException(error);
-//   };
-// }
+const { NativeErrorModule } = NativeModules;
 
 // console.log("hey:", Platform.OS)
 // const BASE_URL = Platform.OS === 'android' ? 'http://10.0.2.2:8080' : 'http://localhost:8080';
@@ -35,44 +19,32 @@ const sendErrorLog = async (error) => {
   }
 };
 
-// const fetchLogStatus = async () => {
-//   try {
-//     const response = await axios.get('http://localhost:8080/log');
-//     console.log('Log status:', response.data);
-//   } catch (err) {
-//     console.error('Failed to fetch log status:', err);
-//   }
-// };
-
 export default function App() {
+  // const onHandledErrorButton = () => {
+    // try {
+    //   const obj = null; 
+    //   obj.someMethod(); 
+    // } catch (error) {
+    //   console.log('Handled null stack trace:', error.stack);
+    //   sendErrorLog(error);
+    //   return error;
+    // }
+  // }
+
   const onHandledErrorButton = () => {
-    // const error = new Error('Intentional handled error');
-    // console.error('Handled error stack trace:', error.stack);
-    // sendErrorLog(error);
-    // return error;
-    try {
-      const obj = null; 
-      obj.someMethod(); 
-    } catch (error) {
-      // console.error('Handled null stack trace:', error.stack);
-      console.log('Handled null stack trace:', error.stack);
-      sendErrorLog(error);
-      return error;
-    }
+    // NativeErrorModule.throwError((errorStackTrace) => {
+    //   console.log("java stack trace: ", errorStackTrace)
+    // });
+    NativeErrorModule.throwError();
   }
   
   const onUnhandledErrorButton = () => {
     const error = new Error('Intentional unhandled error: promise rejection');
     Promise.reject(error);
-    // console.error('Unhandled error stack trace:', error.stack);
     console.log('Unhandled error stack trace:', error.stack);
     sendErrorLog(error);
     return error;
   }
-
-  // useEffect(() => {
-  //   fetchLogStatus();
-  // }, []);
 
   return (
     <View style={styles.container}>

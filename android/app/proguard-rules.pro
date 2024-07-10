@@ -9,46 +9,40 @@
 
 # Add any project specific keep options here:
 
--assumenosideeffects class android.util.Log { *; }
+## Preserve the React Native bridge classes and methods
+-keep, allowobfuscation class com.facebook.react.** { *; }
 
-# Keep all classes and members in the io.invertase.firebase package
--keep class io.invertase.firebase.** { *; }
+# Preserve React Native modules and their methods
+-keep, allowobfuscation class * extends com.facebook.react.bridge.ReactContextBaseJavaModule { *; }
+-keep, allowobfuscation class * implements com.facebook.react.bridge.NativeModule { *; }
 
-# Don't warn about missing classes in the io.invertase.firebase package
--dontwarn io.invertase.firebase.**
-
-# Keep attributes related to annotations
--keepattributes *Annotation*,EnclosingMethod,InnerClasses,Signature
-
-# Keep methods annotated with @org.greenrobot.eventbus.Subscribe
--keepclassmembers class ** {
-    @org.greenrobot.eventbus.Subscribe <methods>;
+# Preserve methods annotated with @ReactMethod
+-keepclassmembers, allowobfuscation class * {
+    @com.facebook.react.bridge.ReactMethod <methods>;
 }
 
-# Keep the enum org.greenrobot.eventbus.ThreadMode and all its members
--keep enum org.greenrobot.eventbus.ThreadMode { *; }
+# Preserve attributes used by React Native
+-keepattributes *Annotation*,EnclosingMethod,InnerClasses
 
--keep class com.errorapp.** { *; }
--dontwarn com.errorapp.**
--keep class android.support.** { *; }
--keep class androidx.** { *; }
+# Preserve classes and methods used by the React Native framework
+-keepnames @interface * extends java.lang.annotation.Annotation
 
-## Keep React Native's native modules and their methods
-#-keep class com.facebook.react.** { *; }
-#-keep class com.facebook.hermes.** { *; }
-#-keep class com.facebook.soloader.** { *; }
-#
-## Don't strip out methods used in JS
-#-keepclassmembers class *  {
-#  @com.facebook.react.bridge.ReactMethod <methods>;
-#}
-#
-## Keep classes used in XML layout files
-#-keepclassmembers class * {
-#  public <init>(android.content.Context, android.util.AttributeSet);
-#}
-#
-## Keep the React Native internal interfaces and methods
-#-keepclassmembers @com.facebook.proguard.annotations.DoNotStrip class * { *; }
-#-keep @com.facebook.proguard.annotations.DoNotStrip class *
-#-keep @com.facebook.proguard.annotations.KeepGettersAndSetters class *
+# Preserve native methods
+-keepclassmembers, allowobfuscation class **.** {
+    native <methods>;
+}
+
+-keep, allowobfuscation class com.** { *; }
+
+# Preserve line numbers and source file names for better debugging
+-keepattributes SourceFile,LineNumberTable
+
+# Obfuscate everything else
+-dontwarn com.facebook.react.**
+-dontwarn com.facebook.infer.annotation.**
+-dontwarn javax.annotation.**
+-dontwarn com.squareup.**
+-dontwarn okhttp3.**
+-dontwarn androidx.exifinterface.media.ExifInterface
+
+-printconfiguration proguard-configuration.txt
